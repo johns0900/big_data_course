@@ -6,7 +6,7 @@ today_dt=`date +%Y%m%d`
 #check if the directory already exists and capture the return code
 hadoop fs -ls /data/archive/$today_dt
 
-if [$? != 0]
+if [ $? != 0 ]
 then
   #Directory doesn't exists
   **write command to create directory
