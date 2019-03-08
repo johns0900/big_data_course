@@ -45,3 +45,41 @@ hive -f yourScript.hql
 
 --HOW TO RUN IMPALA-SHELL WITHIN UNIX SHELL SCRIPT
 impala-shell -d hiveexe -q "insert overwrite table tags select * from tags where tag != '$1'"
+
+
+
+show create table movies_stage;
+
+CREATE TABLE `movies_stage`(
+  `movieid` int COMMENT 'UPI NOT NULL', 
+  `title` string, 
+  `genres` string)
+ROW FORMAT SERDE 
+  'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe' 
+WITH SERDEPROPERTIES ( 
+  'field.delim'=',', 
+  'serialization.format'=',') 
+STORED AS INPUTFORMAT 
+  'org.apache.hadoop.mapred.TextInputFormat' 
+OUTPUTFORMAT 
+  'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'
+LOCATION
+  'hdfs://localhost:54310/user/hive/warehouse/mydb.db/movies_stage'
+TBLPROPERTIES (
+  'transient_lastDdlTime'='1551979415')
+
+NOT NULL
+
+select count(*) as nullcnt from movies_stage where movieid is null;
+
+UPI
+
+select movieid, count(movieid) as tmp from movies_stage group by movieid having tmp>1;
+
+select movieid, count(movieid) as tmp from movies_stage group by movieid having tmp>1 union all select t.movieid, count(t.movieid) as tmp from movies t join movies_stage s on s.movieid = t.movieid group by t.movieid;
+
+DEDUPE
+
+insert overwrite table movies_stage select DISTINCT * from movies_stage;
+
+
