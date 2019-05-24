@@ -1,5 +1,7 @@
 create table stage_transaction (tx_id int, product_cd string, trans_dt string, amt double, qty double) row format delimited fields terminated by ',';
 
+select count(*) from stage_transaction where trans_dt='01-Apr-12';
+ 
 //COPY YOUR CSV FILE TO stage_transaction table
 
 create table transaction (tx_id int, product_cd string, amt double, qty double) partitioned by (trans_dt string)  row format delimited fields terminated by ',';
